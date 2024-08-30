@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小群昵称生成器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #nickname {
+            font-size: 48px;
+            margin: 20px 0;
+            height: 60px;
+            text-align: center;
+        }
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        #status {
+            margin-top: 20px;
+            color: #666;
+        }
+        footer {
+            flex-shrink: 0;
+            text-align: center;
+            background-color: #f0f0f0;
+            padding: 10px;
+            font-size: 14px;
+            color: #888;
+        }        
+    </style>
+</head>
+<body>
+    <h1>小群昵称生成器</h1>
+    <button id="pickButton" disabled>来一个</button>
+    <div id="nickname"></div>
+    <div id="status">读取中...</div>
+    <footer>
+    
+    
+    
+    
+    
+    
+        © 2024 AR制作
+    </footer>    
+    <script>
+        let nicknames = [];
+        const pickButton = document.getElementById('pickButton');
+        const nicknameDisplay = document.getElementById('nickname');
+        const statusDisplay = document.getElementById('status');
+
+        // Function to load nicknames from the text file
+        function loadNicknames() {
+            fetch('nicknames.txt')
+                .then(response => response.text())
+                .then(text => {
+                    // Split the text into an array and remove empty strings
+                    nicknames = text.split('\n')
+                        .map(line => line.trim())
+                        .filter(line => line.length > 0)
+                        .map(line => {
+                            // Remove quotes if present
+                            return line.replace(/^"|"$/g, '');
+                        });
+                    
+                    if (nicknames.length > 0) {
+                        pickButton.disabled = false;
+                        statusDisplay.textContent = `${nicknames.length} nicknames loaded!`;
+                    } else {
+                        statusDisplay.textContent = 'No nicknames found in the file.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading nicknames:', error);
+                    statusDisplay.textContent = 'Error loading nicknames. Check console for details.';
+                });
+        }
+
+        // Load nicknames when the page loads
+        loadNicknames();
+
+        // Event listener for the button click
+        pickButton.addEventListener('click', () => {
+            if (nicknames.length > 0) {
+                const randomIndex = Math.floor(Math.random() * nicknames.length);
+                nicknameDisplay.textContent = nicknames[randomIndex];
+            } else {
+                nicknameDisplay.textContent = 'No nicknames available';
+            }
+        });
+    </script>
+</body>
+</html>
