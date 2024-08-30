@@ -2,29 +2,54 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>小群昵称生成器</title>
     <style>
-        body {
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
             font-family: Arial, sans-serif;
+        }
+        body {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            margin: 0;
             background-color: #f0f0f0;
         }
-        #nickname {
-            font-size: 48px;
-            margin: 20px 0;
-            height: 60px;
+        .content {
+            flex: 1 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
             text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        #nickname {
+            font-size: 36px;
+            margin: 20px 0;
+            word-wrap: break-word;
+            max-width: 100%;
+            padding: 0 10px;
+            box-sizing: border-box;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         button {
             font-size: 18px;
             padding: 10px 20px;
             cursor: pointer;
+            touch-action: manipulation;
         }
         #status {
             margin-top: 20px;
@@ -37,23 +62,20 @@
             padding: 10px;
             font-size: 14px;
             color: #888;
-        }        
+            width: 100%;
+        }
     </style>
 </head>
 <body>
-    <h1>小群昵称生成器</h1>
-    <button id="pickButton" disabled>来一个</button>
-    <div id="nickname"></div>
-    <div id="status">读取中...</div>
+    <div class="content">
+        <h1>小群昵称生成器</h1>
+        <button id="pickButton" disabled>来一个</button>
+        <div id="nickname"></div>
+        <div id="status">读取中...</div>
+    </div>
     <footer>
-    
-    
-    
-    
-    
-    
-        © 2024 AR制作 （aw对本工具上线亦有贡献）
-    </footer>    
+        © 2024 AR制作 (aw对本工具上线亦有贡献)
+    </footer>
     <script>
         let nicknames = [];
         const pickButton = document.getElementById('pickButton');
@@ -65,25 +87,21 @@
             fetch('nicknames.txt')
                 .then(response => response.text())
                 .then(text => {
-                    // Split the text into an array and remove empty strings
                     nicknames = text.split('\n')
                         .map(line => line.trim())
                         .filter(line => line.length > 0)
-                        .map(line => {
-                            // Remove quotes if present
-                            return line.replace(/^"|"$/g, '');
-                        });
+                        .map(line => line.replace(/^"|"$/g, ''));
                     
                     if (nicknames.length > 0) {
                         pickButton.disabled = false;
-                        statusDisplay.textContent = `${nicknames.length} nicknames loaded!`;
+                        statusDisplay.textContent = `${nicknames.length} 个昵称已加载！`;
                     } else {
-                        statusDisplay.textContent = 'No nicknames found in the file.';
+                        statusDisplay.textContent = '文件中没有找到昵称。';
                     }
                 })
                 .catch(error => {
                     console.error('Error loading nicknames:', error);
-                    statusDisplay.textContent = 'Error loading nicknames. Check console for details.';
+                    statusDisplay.textContent = '加载昵称时出错。请查看控制台以获取详细信息。';
                 });
         }
 
@@ -96,9 +114,25 @@
                 const randomIndex = Math.floor(Math.random() * nicknames.length);
                 nicknameDisplay.textContent = nicknames[randomIndex];
             } else {
-                nicknameDisplay.textContent = 'No nicknames available';
+                nicknameDisplay.textContent = '没有可用的昵称';
             }
         });
+
+        // Prevent double-tap zoom on mobile
+        document.addEventListener('touchstart', function(event) {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
+
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
     </script>
 </body>
 </html>
