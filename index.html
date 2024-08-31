@@ -17,6 +17,8 @@
             align-items: center;
             justify-content: center;
             background-color: #f0f0f0;
+            color: #000;
+            transition: background-color 0.3s, color 0.3s;
         }
         .content {
             flex: 1 0 auto;
@@ -64,9 +66,40 @@
             color: #888;
             width: 100%;
         }
+        #themeToggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 14px;
+            padding: 5px 10px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            color: #000;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Dark mode styles */
+        body.dark-mode {
+            background-color: #1e1e1e;
+            color: #fff;
+        }
+        body.dark-mode #status {
+            color: #ccc;
+        }
+        body.dark-mode footer {
+            background-color: #1e1e1e;
+            color: #aaa;
+        }
+        body.dark-mode #themeToggle {
+            background-color: #333;
+            color: #fff;
+            border-color: #555;
+        }
     </style>
 </head>
 <body>
+    <button id="themeToggle">亮暗</button>
     <div class="content">
         <h1>小群昵称生成器</h1>
         <button id="pickButton" disabled>来一个</button>
@@ -74,17 +107,18 @@
         <div id="status">读取中...</div>
     </div>
     <footer>
-        © 2024 AR制作 (aw对本工具上线亦有贡献)
+        v1.3 © 2024 AR制作 (aw对本工具上线亦有贡献)
     </footer>
     <script>
         let nicknames = [];
         const pickButton = document.getElementById('pickButton');
         const nicknameDisplay = document.getElementById('nickname');
         const statusDisplay = document.getElementById('status');
+        const themeToggle = document.getElementById('themeToggle');
 
         // Function to load nicknames from the text file
         function loadNicknames() {
-            fetch('nicknames.txt')
+            fetch('nicknames_v2.txt')
                 .then(response => response.text())
                 .then(text => {
                     nicknames = text.split('\n')
@@ -116,6 +150,11 @@
             } else {
                 nicknameDisplay.textContent = '没有可用的昵称';
             }
+        });
+
+        // Theme toggle functionality
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
         });
 
         // Prevent double-tap zoom on mobile
